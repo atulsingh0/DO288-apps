@@ -6,4 +6,3 @@ cd ~/DO288-apps
 lab $1 finish
 git add --all :/
 git commit -m $1
-git push

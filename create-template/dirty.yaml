@@ -1,0 +1,913 @@
+apiVersion: v1
+items:
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: "2021-02-18T18:46:19Z"
+    labels:
+      app: quotesapi
+      app.kubernetes.io/component: quotesapi
+      app.kubernetes.io/instance: quotesapi
+    managedFields:
+    - apiVersion: build.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:openshift.io/generated-by: {}
+          f:labels:
+            .: {}
+            f:app: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/instance: {}
+        f:spec:
+          f:output:
+            f:to:
+              .: {}
+              f:kind: {}
+              f:name: {}
+          f:runPolicy: {}
+          f:source:
+            f:contextDir: {}
+            f:git:
+              .: {}
+              f:uri: {}
+            f:type: {}
+          f:strategy:
+            f:sourceStrategy:
+              .: {}
+              f:from:
+                .: {}
+                f:kind: {}
+                f:name: {}
+                f:namespace: {}
+            f:type: {}
+      manager: oc
+      operation: Update
+      time: "2021-02-18T18:46:19Z"
+    - apiVersion: build.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:spec:
+          f:triggers: {}
+        f:status:
+          f:lastVersion: {}
+      manager: openshift-apiserver
+      operation: Update
+      time: "2021-02-18T18:46:19Z"
+    name: quotesapi
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2892761"
+    selfLink: /apis/build.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/buildconfigs/quotesapi
+    uid: 7d348598-bead-4173-80ba-7d8ac16ed841
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: quotesapi:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      contextDir: quotes
+      git:
+        uri: https://github.com/durhar/DO288-apps
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: php:7.2
+          namespace: openshift
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: WEQANDva9zVlmPaWS1IB
+      type: GitHub
+    - generic:
+        secret: j50_AENDB2yIKC2y7mIu
+      type: Generic
+    - type: ConfigChange
+    - imageChange:
+        lastTriggeredImageID: image-registry.openshift-image-registry.svc:5000/openshift/php@sha256:cee55e4fa48f3536b478789018d466eb417ddb8360d0608f3d48cb5b72a77fca
+      type: ImageChange
+  status:
+    lastVersion: 1
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: "2021-02-18T18:46:19Z"
+    generation: 1
+    labels:
+      app: quotesapi
+      app.kubernetes.io/component: quotesapi
+      app.kubernetes.io/instance: quotesapi
+    managedFields:
+    - apiVersion: image.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:openshift.io/generated-by: {}
+          f:labels:
+            .: {}
+            f:app: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/instance: {}
+      manager: oc
+      operation: Update
+      time: "2021-02-18T18:46:19Z"
+    name: quotesapi
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2893033"
+    selfLink: /apis/image.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/imagestreams/quotesapi
+    uid: 58012644-2b18-4adf-8e4b-3bdad1b5e9a3
+  spec:
+    lookupPolicy:
+      local: false
+  status:
+    dockerImageRepository: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesapi
+    publicDockerImageRepository: default-route-openshift-image-registry.apps.na45.prod.nextcle.com/durga-haridoss-rbc-com-quotes-dev/quotesapi
+    tags:
+    - items:
+      - created: "2021-02-18T18:46:53Z"
+        dockerImageReference: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
+        generation: 1
+        image: sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
+      tag: latest
+- apiVersion: image.openshift.io/v1
+  kind: ImageStream
+  metadata:
+    annotations:
+      openshift.io/image.dockerRepositoryCheck: "2021-02-18T18:46:10Z"
+    creationTimestamp: "2021-02-18T18:46:10Z"
+    generation: 2
+    name: quotesdb
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2892646"
+    selfLink: /apis/image.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/imagestreams/quotesdb
+    uid: 8c4953d1-83d6-47f5-bf6e-4a19b3db9fa3
+  spec:
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: image-registry.openshift-image-registry.svc:5000/openshift/mysql:5.7
+      generation: 2
+      importPolicy: {}
+      name: "5.7"
+      referencePolicy:
+        type: Source
+  status:
+    dockerImageRepository: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesdb
+    publicDockerImageRepository: default-route-openshift-image-registry.apps.na45.prod.nextcle.com/durga-haridoss-rbc-com-quotes-dev/quotesdb
+    tags:
+    - items:
+      - created: "2021-02-18T18:46:10Z"
+        dockerImageReference: image-registry.openshift-image-registry.svc:5000/openshift/mysql@sha256:9a781abe7581cc141e14a7e404ec34125b3e89c008b14f4e7b41e094fd3049fe
+        generation: 2
+        image: sha256:9a781abe7581cc141e14a7e404ec34125b3e89c008b14f4e7b41e094fd3049fe
+      tag: "5.7"
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    annotations:
+      pv.kubernetes.io/bind-completed: "yes"
+      pv.kubernetes.io/bound-by-controller: "yes"
+      volume.beta.kubernetes.io/storage-provisioner: kubernetes.io/cinder
+      volume.kubernetes.io/selected-node: na45-45xr9-worker-w6j2l
+    creationTimestamp: "2021-02-18T18:46:10Z"
+    finalizers:
+    - kubernetes.io/pvc-protection
+    managedFields:
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:spec:
+          f:accessModes: {}
+          f:resources:
+            f:requests:
+              .: {}
+              f:storage: {}
+          f:volumeMode: {}
+      manager: oc
+      operation: Update
+      time: "2021-02-18T18:46:10Z"
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            f:pv.kubernetes.io/bind-completed: {}
+            f:pv.kubernetes.io/bound-by-controller: {}
+            f:volume.beta.kubernetes.io/storage-provisioner: {}
+        f:spec:
+          f:volumeName: {}
+        f:status:
+          f:accessModes: {}
+          f:capacity:
+            .: {}
+            f:storage: {}
+          f:phase: {}
+      manager: kube-controller-manager
+      operation: Update
+      time: "2021-02-18T18:46:14Z"
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:volume.kubernetes.io/selected-node: {}
+      manager: kube-scheduler
+      operation: Update
+      time: "2021-02-18T18:46:14Z"
+    name: quotesdb-claim
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2892698"
+    selfLink: /api/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/persistentvolumeclaims/quotesdb-claim
+    uid: 720a42df-e732-4f26-8e4c-3418f8ec8998
+  spec:
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 300Mi
+    storageClassName: standard
+    volumeMode: Filesystem
+    volumeName: pvc-720a42df-e732-4f26-8e4c-3418f8ec8998
+  status:
+    accessModes:
+    - ReadWriteOnce
+    capacity:
+      storage: 1Gi
+    phase: Bound
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: "2021-02-18T18:46:19Z"
+    generation: 2
+    labels:
+      app: quotesapi
+      app.kubernetes.io/component: quotesapi
+      app.kubernetes.io/instance: quotesapi
+    managedFields:
+    - apiVersion: apps.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:openshift.io/generated-by: {}
+          f:labels:
+            .: {}
+            f:app: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/instance: {}
+        f:spec:
+          f:replicas: {}
+          f:selector:
+            .: {}
+            f:deploymentconfig: {}
+          f:strategy:
+            f:activeDeadlineSeconds: {}
+            f:rollingParams:
+              .: {}
+              f:intervalSeconds: {}
+              f:maxSurge: {}
+              f:maxUnavailable: {}
+              f:timeoutSeconds: {}
+              f:updatePeriodSeconds: {}
+            f:type: {}
+          f:template:
+            .: {}
+            f:metadata:
+              .: {}
+              f:annotations:
+                .: {}
+                f:openshift.io/generated-by: {}
+              f:creationTimestamp: {}
+              f:labels:
+                .: {}
+                f:deploymentconfig: {}
+            f:spec:
+              .: {}
+              f:containers:
+                .: {}
+                k:{"name":"quotesapi"}:
+                  .: {}
+                  f:env:
+                    .: {}
+                    k:{"name":"DATABASE_NAME"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"DATABASE_PASSWORD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"DATABASE_SERVICE_NAME"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"DATABASE_USER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                  f:imagePullPolicy: {}
+                  f:name: {}
+                  f:ports:
+                    .: {}
+                    k:{"containerPort":8080,"protocol":"TCP"}:
+                      .: {}
+                      f:containerPort: {}
+                      f:protocol: {}
+                    k:{"containerPort":8443,"protocol":"TCP"}:
+                      .: {}
+                      f:containerPort: {}
+                      f:protocol: {}
+                  f:resources: {}
+                  f:terminationMessagePath: {}
+                  f:terminationMessagePolicy: {}
+              f:dnsPolicy: {}
+              f:restartPolicy: {}
+              f:schedulerName: {}
+              f:securityContext: {}
+              f:terminationGracePeriodSeconds: {}
+      manager: oc
+      operation: Update
+      time: "2021-02-18T18:46:19Z"
+    - apiVersion: apps.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:spec:
+          f:template:
+            f:spec:
+              f:containers:
+                k:{"name":"quotesapi"}:
+                  f:image: {}
+          f:triggers: {}
+        f:status:
+          f:availableReplicas: {}
+          f:conditions:
+            .: {}
+            k:{"type":"Available"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:status: {}
+              f:type: {}
+            k:{"type":"Progressing"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+          f:details:
+            .: {}
+            f:causes: {}
+            f:message: {}
+          f:latestVersion: {}
+          f:observedGeneration: {}
+          f:readyReplicas: {}
+          f:replicas: {}
+          f:unavailableReplicas: {}
+          f:updatedReplicas: {}
+      manager: openshift-controller-manager
+      operation: Update
+      time: "2021-02-18T18:47:01Z"
+    name: quotesapi
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2893131"
+    selfLink: /apis/apps.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/deploymentconfigs/quotesapi
+    uid: 7d3d02b5-75c1-4e14-ab52-ac736910933d
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: quotesapi
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deploymentconfig: quotesapi
+      spec:
+        containers:
+        - env:
+          - name: DATABASE_NAME
+            value: quotesdb
+          - name: DATABASE_PASSWORD
+            value: redhat
+          - name: DATABASE_SERVICE_NAME
+            value: quotesdb
+          - name: DATABASE_USER
+            value: quoteapp
+          image: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
+          imagePullPolicy: Always
+          name: quotesapi
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - quotesapi
+        from:
+          kind: ImageStreamTag
+          name: quotesapi:latest
+          namespace: durga-haridoss-rbc-com-quotes-dev
+        lastTriggeredImage: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
+      type: ImageChange
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2021-02-18T18:47:00Z"
+      lastUpdateTime: "2021-02-18T18:47:00Z"
+      message: Deployment config has minimum availability.
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2021-02-18T18:47:01Z"
+      lastUpdateTime: "2021-02-18T18:47:01Z"
+      message: replication controller "quotesapi-1" successfully rolled out
+      reason: NewReplicationControllerAvailable
+      status: "True"
+      type: Progressing
+    details:
+      causes:
+      - type: ConfigChange
+      message: config change
+    latestVersion: 1
+    observedGeneration: 2
+    readyReplicas: 1
+    replicas: 1
+    unavailableReplicas: 0
+    updatedReplicas: 1
+- apiVersion: apps.openshift.io/v1
+  kind: DeploymentConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: "2021-02-18T18:46:10Z"
+    generation: 3
+    labels:
+      app: quotesdb
+      app.kubernetes.io/component: quotesdb
+      app.kubernetes.io/instance: quotesdb
+      app.kubernetes.io/name: mysql
+    managedFields:
+    - apiVersion: apps.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:openshift.io/generated-by: {}
+          f:labels:
+            .: {}
+            f:app: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/instance: {}
+            f:app.kubernetes.io/name: {}
+        f:spec:
+          f:replicas: {}
+          f:selector:
+            .: {}
+            f:deploymentconfig: {}
+          f:strategy:
+            f:activeDeadlineSeconds: {}
+            f:rollingParams:
+              .: {}
+              f:intervalSeconds: {}
+              f:maxSurge: {}
+              f:maxUnavailable: {}
+              f:timeoutSeconds: {}
+              f:updatePeriodSeconds: {}
+            f:type: {}
+          f:template:
+            .: {}
+            f:metadata:
+              .: {}
+              f:annotations:
+                .: {}
+                f:openshift.io/generated-by: {}
+              f:creationTimestamp: {}
+              f:labels:
+                .: {}
+                f:deploymentconfig: {}
+            f:spec:
+              .: {}
+              f:containers:
+                .: {}
+                k:{"name":"quotesdb"}:
+                  .: {}
+                  f:env:
+                    .: {}
+                    k:{"name":"MYSQL_DATABASE"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"MYSQL_PASSWORD"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                    k:{"name":"MYSQL_USER"}:
+                      .: {}
+                      f:name: {}
+                      f:value: {}
+                  f:imagePullPolicy: {}
+                  f:name: {}
+                  f:ports:
+                    .: {}
+                    k:{"containerPort":3306,"protocol":"TCP"}:
+                      .: {}
+                      f:containerPort: {}
+                      f:protocol: {}
+                  f:resources: {}
+                  f:terminationMessagePath: {}
+                  f:terminationMessagePolicy: {}
+              f:dnsPolicy: {}
+              f:restartPolicy: {}
+              f:schedulerName: {}
+              f:securityContext: {}
+              f:terminationGracePeriodSeconds: {}
+              f:volumes:
+                .: {}
+                k:{"name":"quotesdb-volume-1"}:
+                  .: {}
+                  f:name: {}
+                  f:persistentVolumeClaim:
+                    .: {}
+                    f:claimName: {}
+      manager: oc
+      operation: Update
+      time: "2021-02-18T18:46:10Z"
+    - apiVersion: apps.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:spec:
+          f:template:
+            f:spec:
+              f:containers:
+                k:{"name":"quotesdb"}:
+                  f:image: {}
+          f:triggers: {}
+        f:status:
+          f:availableReplicas: {}
+          f:conditions:
+            .: {}
+            k:{"type":"Available"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:status: {}
+              f:type: {}
+            k:{"type":"Progressing"}:
+              .: {}
+              f:lastTransitionTime: {}
+              f:lastUpdateTime: {}
+              f:message: {}
+              f:reason: {}
+              f:status: {}
+              f:type: {}
+          f:details:
+            .: {}
+            f:causes: {}
+            f:message: {}
+          f:latestVersion: {}
+          f:observedGeneration: {}
+          f:readyReplicas: {}
+          f:replicas: {}
+          f:unavailableReplicas: {}
+          f:updatedReplicas: {}
+      manager: openshift-controller-manager
+      operation: Update
+      time: "2021-02-18T18:46:20Z"
+    name: quotesdb
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2892776"
+    selfLink: /apis/apps.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/deploymentconfigs/quotesdb
+    uid: 13bc8f33-3364-461e-a1f3-7763ad8229a0
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      deploymentconfig: quotesdb
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          deploymentconfig: quotesdb
+      spec:
+        containers:
+        - env:
+          - name: MYSQL_DATABASE
+            value: quotesdb
+          - name: MYSQL_PASSWORD
+            value: redhat
+          - name: MYSQL_USER
+            value: quoteapp
+          image: image-registry.openshift-image-registry.svc:5000/openshift/mysql@sha256:9a781abe7581cc141e14a7e404ec34125b3e89c008b14f4e7b41e094fd3049fe
+          imagePullPolicy: IfNotPresent
+          name: quotesdb
+          ports:
+          - containerPort: 3306
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+        - name: quotesdb-volume-1
+          persistentVolumeClaim:
+            claimName: quotesdb-claim
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - quotesdb
+        from:
+          kind: ImageStreamTag
+          name: mysql:5.7
+          namespace: openshift
+        lastTriggeredImage: image-registry.openshift-image-registry.svc:5000/openshift/mysql@sha256:9a781abe7581cc141e14a7e404ec34125b3e89c008b14f4e7b41e094fd3049fe
+      type: ImageChange
+  status:
+    availableReplicas: 1
+    conditions:
+    - lastTransitionTime: "2021-02-18T18:46:19Z"
+      lastUpdateTime: "2021-02-18T18:46:19Z"
+      message: Deployment config has minimum availability.
+      status: "True"
+      type: Available
+    - lastTransitionTime: "2021-02-18T18:46:20Z"
+      lastUpdateTime: "2021-02-18T18:46:20Z"
+      message: replication controller "quotesdb-1" successfully rolled out
+      reason: NewReplicationControllerAvailable
+      status: "True"
+      type: Progressing
+    details:
+      causes:
+      - type: ConfigChange
+      message: config change
+    latestVersion: 1
+    observedGeneration: 3
+    readyReplicas: 1
+    replicas: 1
+    unavailableReplicas: 0
+    updatedReplicas: 1
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: "2021-02-18T18:46:19Z"
+    labels:
+      app: quotesapi
+      app.kubernetes.io/component: quotesapi
+      app.kubernetes.io/instance: quotesapi
+    managedFields:
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:openshift.io/generated-by: {}
+          f:labels:
+            .: {}
+            f:app: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/instance: {}
+        f:spec:
+          f:ports:
+            .: {}
+            k:{"port":8080,"protocol":"TCP"}:
+              .: {}
+              f:name: {}
+              f:port: {}
+              f:protocol: {}
+              f:targetPort: {}
+            k:{"port":8443,"protocol":"TCP"}:
+              .: {}
+              f:name: {}
+              f:port: {}
+              f:protocol: {}
+              f:targetPort: {}
+          f:selector:
+            .: {}
+            f:deploymentconfig: {}
+          f:sessionAffinity: {}
+          f:type: {}
+      manager: oc
+      operation: Update
+      time: "2021-02-18T18:46:19Z"
+    name: quotesapi
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2892756"
+    selfLink: /api/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/services/quotesapi
+    uid: c9baf86e-5c8f-421c-81fa-0e535397f8bb
+  spec:
+    clusterIP: 172.30.83.108
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    - name: 8443-tcp
+      port: 8443
+      protocol: TCP
+      targetPort: 8443
+    selector:
+      deploymentconfig: quotesapi
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: "2021-02-18T18:46:10Z"
+    labels:
+      app: quotesdb
+      app.kubernetes.io/component: quotesdb
+      app.kubernetes.io/instance: quotesdb
+      app.kubernetes.io/name: mysql
+    managedFields:
+    - apiVersion: v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:openshift.io/generated-by: {}
+          f:labels:
+            .: {}
+            f:app: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/instance: {}
+            f:app.kubernetes.io/name: {}
+        f:spec:
+          f:ports:
+            .: {}
+            k:{"port":3306,"protocol":"TCP"}:
+              .: {}
+              f:name: {}
+              f:port: {}
+              f:protocol: {}
+              f:targetPort: {}
+          f:selector:
+            .: {}
+            f:deploymentconfig: {}
+          f:sessionAffinity: {}
+          f:type: {}
+      manager: oc
+      operation: Update
+      time: "2021-02-18T18:46:10Z"
+    name: quotesdb
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2892636"
+    selfLink: /api/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/services/quotesdb
+    uid: 80e7eb62-9703-4fef-9863-6a42ca79b5e3
+  spec:
+    clusterIP: 172.30.119.25
+    ports:
+    - name: 3306-tcp
+      port: 3306
+      protocol: TCP
+      targetPort: 3306
+    selector:
+      deploymentconfig: quotesdb
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
+- apiVersion: route.openshift.io/v1
+  kind: Route
+  metadata:
+    annotations:
+      openshift.io/host.generated: "true"
+    creationTimestamp: "2021-02-18T18:47:00Z"
+    labels:
+      app: quotesapi
+      app.kubernetes.io/component: quotesapi
+      app.kubernetes.io/instance: quotesapi
+    managedFields:
+    - apiVersion: route.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:labels:
+            .: {}
+            f:app: {}
+            f:app.kubernetes.io/component: {}
+            f:app.kubernetes.io/instance: {}
+        f:spec:
+          f:port:
+            .: {}
+            f:targetPort: {}
+          f:to:
+            f:kind: {}
+            f:name: {}
+            f:weight: {}
+          f:wildcardPolicy: {}
+      manager: oc
+      operation: Update
+      time: "2021-02-18T18:47:00Z"
+    - apiVersion: route.openshift.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:status:
+          f:ingress: {}
+      manager: openshift-router
+      operation: Update
+      time: "2021-02-18T18:47:01Z"
+    name: quotesapi
+    namespace: durga-haridoss-rbc-com-quotes-dev
+    resourceVersion: "2893126"
+    selfLink: /apis/route.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/routes/quotesapi
+    uid: 06ded4ee-1c62-4092-b917-b69eca5fcb99
+  spec:
+    host: quotesapi-durga-haridoss-rbc-com-quotes-dev.apps.na45.prod.nextcle.com
+    port:
+      targetPort: 8080-tcp
+    to:
+      kind: Service
+      name: quotesapi
+      weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+    - conditions:
+      - lastTransitionTime: "2021-02-18T18:47:01Z"
+        status: "True"
+        type: Admitted
+      host: quotesapi-durga-haridoss-rbc-com-quotes-dev.apps.na45.prod.nextcle.com
+      routerCanonicalHostname: apps.na45.prod.nextcle.com
+      routerName: default
+      wildcardPolicy: None
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

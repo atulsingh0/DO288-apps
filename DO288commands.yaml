@@ -453,3 +453,7 @@ oc set probe dc/quip --liveness \
 oc set probe dc/quip --readiness \
 --get-url=http://:8080/ready \
 --initial-delay-seconds=30 --timeout-seconds=2
+
+
+oc start-build quip -F
+oc rollback dc/quip

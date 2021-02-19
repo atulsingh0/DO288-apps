@@ -349,6 +349,11 @@ podman run -d -p 9000:8080 s2i-go-app
 podman push quay.io/atulsingh0/s2i-do288-go
 oc import-image s2i-do288-go --from=quay.io/atulsingh0/s2i-do288-go --confirm
 
+oc new-app --name greet --as-deployment-config \
+s2i-do288-go~https://github.com/atulsingh0/DO288-apps#develop \
+--context-dir custom-s2i/test/test-app
+
+- now making changed in run file inside test app 
 
 
 # CH06-Ex1
@@ -373,4 +378,62 @@ oc new-app  --as-deployment-config --name todo --file ./todo-template-fix.yaml \
     -p SECRET=atul1234 \
     -p HOSTNAME=todo-container-image.apps.na45.prod.nextcle.com
 
+
+
+# CH07-Ex1
+#-------------------    
+
+oc new-app --as-deployment-config \
+--name probes --build-env \
+npm_config_registry=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+nodejs:12~https://github.com/atulsingh0/DO288-apps \
+--context-dir probes
+
+
+oc get dc/probes -o jsonpath='{.spec.strategy.type}{"\n"}'
+oc get dc/probes -o jsonpath='{.spec.strategy.rollingParams}{"\n"}'
+
+oc patch dc/probes -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+oc patch dc/probes -p '[{"op":"remove", "path":"/spec/strategy/rollingParams"}]' --type json
+
+oc set probe dc/probes --liveness \
+ --get-url=http://:8080/healthz \
+ --initial-delay-seconds=2 --timeout-seconds=2
+
+oc set probe dc/probes --readiness \
+ --get-url=http://:8080/ready \
+ --initial-delay-seconds=2 --timeout-seconds=2
+
+
+# CH07-Ex2
+#-------------------  
+
+oc new-app --as-deployment-config --name mysql \
+-e MYSQL_USER=test -e MYSQL_PASSWORD=redhat -e MYSQL_DATABASE=testdb \
+--docker-image registry.access.redhat.com/rhscl/mysql-57-rhel7
+
+oc get dc/mysql -o jsonpath='{.spec.strategy.type}{"\n"}'
+oc get dc/mysql -o jsonpath='{.spec.strategy.rollingParams}{"\n"}'
+
+oc set triggers dc/mysql --remove-all
+
+oc patch dc/mysql -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+oc patch dc/mysql -p '[{"op":"remove", "path":"/spec/strategy/rollingParams"}]' --type json
+
+
+- import data:
+  POD_NAME=$(oc get pods -l deploymentconfig=mysql -o name)
+  oc port-forward $POD_NAME 33306:3306 &
+  RC=$!
+  mysql -utest -predhat -h127.0.0.1 -P 33306 testdb < users.sql
+  kill $RC
+
+- ./post-hook.sh
+  oc patch dc/mysql --patch '{"spec":{"strategy":{"recreateParams":{"post":{"failurePolicy": "Abort","execNewPod":{"containerName":"mysql","command":["/bin/sh","-c","curl -L -s https://github.com/RedHatTraining/DO288-apps/releases/download/OCP-4.1-1/import.sh -o /tmp/import.sh&&chmod 755 /tmp/import.sh&&/tmp/import.sh"]}}}}}}'
+
+  oc rollout latest dc/mysql
+
+  oc set env dc/mysql HOOK_RETRIES=5
+  oc rollout latest dc/mysql
+  
 

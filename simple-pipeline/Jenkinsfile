@@ -35,7 +35,7 @@ pipeline {
 	stage('approval'){
 		steps {
 		timeout(time:60, unit:"MINUTES"){
-		echo "Kindly approve"
+		input( "Kindly approve: ")
 	}}
 	}
 

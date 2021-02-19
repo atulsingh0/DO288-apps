@@ -435,5 +435,21 @@ oc patch dc/mysql -p '[{"op":"remove", "path":"/spec/strategy/rollingParams"}]' 
 
   oc set env dc/mysql HOOK_RETRIES=5
   oc rollout latest dc/mysql
-  
 
+
+# CH07-Ex3
+#-------------------    
+
+oc new-app --as-deployment-config \
+--name quip --build-env \
+MAVEN_MIRROR_URL=http://nexus-common.apps.na45.prod.nextcle.com/repository/java \
+redhat-openjdk18-openshift:1.5~https://github.com/atulsingh0/DO288-apps \
+--context-dir quip
+
+oc set probe dc/quip --liveness \
+--get-url=http://:8080/ready \
+--initial-delay-seconds=30 --timeout-seconds=2
+
+oc set probe dc/quip --readiness \
+--get-url=http://:8080/ready \
+--initial-delay-seconds=30 --timeout-seconds=2

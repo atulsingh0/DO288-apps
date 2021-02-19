@@ -330,6 +330,26 @@ s2i build test/test-app/ quay.io/atulsingh0/s2i-do288-httpd s2i-httpd-app --as-d
 podman build -t s2i-httpd-app -f s2i-httpd-app/Dockerfile
 
 
+oc new-app --name s2i-httpd-app \
+s2i-do288-httpd~https://github.com/atulsingh0/DO288-apps#develop \
+--context-dir s2i-do288-httpd/test/test-app
+
+
+
+# CH05-lab
+#-------------------
+
+podman build -t quay.io/atulsingh0/s2i-do288-go .
+s2i build test/test-app/ quay.io/atulsingh0/s2i-do288-go s2i-go-app --as-dockerfile s2i-go-app/Dockerfile
+
+podman build -t s2i-go-app -f s2i-go-app/Dockerfile
+
+podman run -d -p 9000:8080 s2i-go-app
+
+podman push quay.io/atulsingh0/s2i-do288-go
+oc import-image s2i-do288-go --from=quay.io/atulsingh0/s2i-do288-go --confirm
+
+
 
 # CH06-Ex1
 #-------------------

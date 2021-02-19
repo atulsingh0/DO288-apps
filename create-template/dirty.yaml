@@ -59,9 +59,9 @@ items:
       operation: Update
       time: "2021-02-18T18:46:19Z"
     name: quotesapi
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2892761"
-    selfLink: /apis/build.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/buildconfigs/quotesapi
+    selfLink: /apis/build.openshift.io/v1/namespaces/atul-singh-quotes-dev/buildconfigs/quotesapi
     uid: 7d348598-bead-4173-80ba-7d8ac16ed841
   spec:
     failedBuildsHistoryLimit: 5
@@ -127,20 +127,20 @@ items:
       operation: Update
       time: "2021-02-18T18:46:19Z"
     name: quotesapi
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2893033"
-    selfLink: /apis/image.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/imagestreams/quotesapi
+    selfLink: /apis/image.openshift.io/v1/namespaces/atul-singh-quotes-dev/imagestreams/quotesapi
     uid: 58012644-2b18-4adf-8e4b-3bdad1b5e9a3
   spec:
     lookupPolicy:
       local: false
   status:
-    dockerImageRepository: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesapi
-    publicDockerImageRepository: default-route-openshift-image-registry.apps.na45.prod.nextcle.com/durga-haridoss-rbc-com-quotes-dev/quotesapi
+    dockerImageRepository: image-registry.openshift-image-registry.svc:5000/atul-singh-quotes-dev/quotesapi
+    publicDockerImageRepository: default-route-openshift-image-registry.apps.na45.prod.nextcle.com/atul-singh-quotes-dev/quotesapi
     tags:
     - items:
       - created: "2021-02-18T18:46:53Z"
-        dockerImageReference: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
+        dockerImageReference: image-registry.openshift-image-registry.svc:5000/atul-singh-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
         generation: 1
         image: sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
       tag: latest
@@ -152,9 +152,9 @@ items:
     creationTimestamp: "2021-02-18T18:46:10Z"
     generation: 2
     name: quotesdb
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2892646"
-    selfLink: /apis/image.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/imagestreams/quotesdb
+    selfLink: /apis/image.openshift.io/v1/namespaces/atul-singh-quotes-dev/imagestreams/quotesdb
     uid: 8c4953d1-83d6-47f5-bf6e-4a19b3db9fa3
   spec:
     lookupPolicy:
@@ -170,8 +170,8 @@ items:
       referencePolicy:
         type: Source
   status:
-    dockerImageRepository: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesdb
-    publicDockerImageRepository: default-route-openshift-image-registry.apps.na45.prod.nextcle.com/durga-haridoss-rbc-com-quotes-dev/quotesdb
+    dockerImageRepository: image-registry.openshift-image-registry.svc:5000/atul-singh-quotes-dev/quotesdb
+    publicDockerImageRepository: default-route-openshift-image-registry.apps.na45.prod.nextcle.com/atul-singh-quotes-dev/quotesdb
     tags:
     - items:
       - created: "2021-02-18T18:46:10Z"
@@ -234,9 +234,9 @@ items:
       operation: Update
       time: "2021-02-18T18:46:14Z"
     name: quotesdb-claim
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2892698"
-    selfLink: /api/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/persistentvolumeclaims/quotesdb-claim
+    selfLink: /api/v1/namespaces/atul-singh-quotes-dev/persistentvolumeclaims/quotesdb-claim
     uid: 720a42df-e732-4f26-8e4c-3418f8ec8998
   spec:
     accessModes:
@@ -393,9 +393,9 @@ items:
       operation: Update
       time: "2021-02-18T18:47:01Z"
     name: quotesapi
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2893131"
-    selfLink: /apis/apps.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/deploymentconfigs/quotesapi
+    selfLink: /apis/apps.openshift.io/v1/namespaces/atul-singh-quotes-dev/deploymentconfigs/quotesapi
     uid: 7d3d02b5-75c1-4e14-ab52-ac736910933d
   spec:
     replicas: 1
@@ -430,7 +430,7 @@ items:
             value: quotesdb
           - name: DATABASE_USER
             value: quoteapp
-          image: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
+          image: image-registry.openshift-image-registry.svc:5000/atul-singh-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
           imagePullPolicy: Always
           name: quotesapi
           ports:
@@ -456,8 +456,8 @@ items:
         from:
           kind: ImageStreamTag
           name: quotesapi:latest
-          namespace: durga-haridoss-rbc-com-quotes-dev
-        lastTriggeredImage: image-registry.openshift-image-registry.svc:5000/durga-haridoss-rbc-com-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
+          namespace: atul-singh-quotes-dev
+        lastTriggeredImage: image-registry.openshift-image-registry.svc:5000/atul-singh-quotes-dev/quotesapi@sha256:7d8cbd87b637628da8922900f90b995b0700fff221d2289e4e5658cb8866687c
       type: ImageChange
   status:
     availableReplicas: 1
@@ -625,9 +625,9 @@ items:
       operation: Update
       time: "2021-02-18T18:46:20Z"
     name: quotesdb
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2892776"
-    selfLink: /apis/apps.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/deploymentconfigs/quotesdb
+    selfLink: /apis/apps.openshift.io/v1/namespaces/atul-singh-quotes-dev/deploymentconfigs/quotesdb
     uid: 13bc8f33-3364-461e-a1f3-7763ad8229a0
   spec:
     replicas: 1
@@ -762,9 +762,9 @@ items:
       operation: Update
       time: "2021-02-18T18:46:19Z"
     name: quotesapi
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2892756"
-    selfLink: /api/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/services/quotesapi
+    selfLink: /api/v1/namespaces/atul-singh-quotes-dev/services/quotesapi
     uid: c9baf86e-5c8f-421c-81fa-0e535397f8bb
   spec:
     clusterIP: 172.30.83.108
@@ -826,9 +826,9 @@ items:
       operation: Update
       time: "2021-02-18T18:46:10Z"
     name: quotesdb
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2892636"
-    selfLink: /api/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/services/quotesdb
+    selfLink: /api/v1/namespaces/atul-singh-quotes-dev/services/quotesdb
     uid: 80e7eb62-9703-4fef-9863-6a42ca79b5e3
   spec:
     clusterIP: 172.30.119.25
@@ -884,12 +884,12 @@ items:
       operation: Update
       time: "2021-02-18T18:47:01Z"
     name: quotesapi
-    namespace: durga-haridoss-rbc-com-quotes-dev
+    namespace: atul-singh-quotes-dev
     resourceVersion: "2893126"
-    selfLink: /apis/route.openshift.io/v1/namespaces/durga-haridoss-rbc-com-quotes-dev/routes/quotesapi
+    selfLink: /apis/route.openshift.io/v1/namespaces/atul-singh-quotes-dev/routes/quotesapi
     uid: 06ded4ee-1c62-4092-b917-b69eca5fcb99
   spec:
-    host: quotesapi-durga-haridoss-rbc-com-quotes-dev.apps.na45.prod.nextcle.com
+    host: quotesapi-atul-singh-quotes-dev.apps.na45.prod.nextcle.com
     port:
       targetPort: 8080-tcp
     to:
@@ -903,7 +903,7 @@ items:
       - lastTransitionTime: "2021-02-18T18:47:01Z"
         status: "True"
         type: Admitted
-      host: quotesapi-durga-haridoss-rbc-com-quotes-dev.apps.na45.prod.nextcle.com
+      host: quotesapi-atul-singh-quotes-dev.apps.na45.prod.nextcle.com
       routerCanonicalHostname: apps.na45.prod.nextcle.com
       routerName: default
       wildcardPolicy: None

@@ -1,0 +1,356 @@
+# DO288 commands
+
+# CH03-Ex1
+#---------------
+
+oc new-project external-registry
+
+podman login quay.io
+
+skopeo copy \
+oci:/home/student/DO288/labs/external-registry/ubi-sleep \
+docker://quay.io/${RHT_OCP4_QUAY_USER}/ubi-sleep:1.0
+
+oc create secret docker-registry quayio \
+--docker-server=quay.io \
+--docker-username=atulsingh0 \
+--docker-password=
+
+oc secrets link default quayio 
+oc secrets link default quayio --for=pull
+
+
+oc import-image ubi-sleep:latest --from=quay.io/atulsingh0/ubi-sleep:1.0 --confirm
+oc new-app --name=ubi-sleep \
+-i ubi-sleep
+
+
+oc delete project external-registry
+
+
+# CH03-Ex2
+#---------------
+
+oc new-project me-common
+
+oc get route -n openshift-image-registry
+
+TOKEN=$(oc whoami -t)
+USERNAME=$(oc whoami)
+
+
+skopeo copy \
+--dcreds=$USERNAME:$TOKEN \
+oci:/home/student/DO288/labs/external-registry/ubi-sleep \
+docker://default-route-openshift-image-registry.apps.na45.prod.nextcle.com/me-common/ubi-sleep:latest 
+
+oc policy add-role-to-user system:image-puller ${USERNAME} -n me-common
+oc get rolebindings -n me-common
+
+podman login default-route-openshift-image-registry.apps.na45.prod.nextcle.com -u $USERNAME -p $TOKEN
+podman pull default-route-openshift-image-registry.apps.na45.prod.nextcle.com/me-common/ubi-sleep:latest
+
+
+oc delete project me-common
+
+
+# CH03-Ex3
+#-------------------
+
+skopeo inspect docker://quay.io/redhattraining/hello-world-nginx
+
+skopeo copy \
+--dcreds=atulsingh0:'V!sual@11' \
+docker://quay.io/redhattraining/hello-world-nginx \
+docker://quay.io/atulsingh0/hello-world-nginx 
+
+skopeo inspect docker://quay.io/redhattraining/hello-world-nginx --creds=atulsingh0:'V!sual@11'
+
+
+oc create secret docker-registry quayio \
+--docker-server=quay.io \
+--docker-username=atulsingh0 \
+--docker-password='V!sual@11'
+
+oc secrets link default quayio --for=pull
+
+oc import-image hello-world-nginx:latest --from=quay.io/redhattraining/hello-world-nginx --confirm
+
+oc new-app --name hello \
+-i hello-world-nginx:latest
+oc expose svc/hello
+oc get route
+
+
+# CH03-lab
+#-------------------
+
+skopeo copy \
+oci:php-info \
+docker://quay.io/atulsingh0/php-info:latest \
+--dcreds=atulsingh0:'V!sual@11'
+
+skopeo inspect --creds=atulsingh0:'V!sual@11' \
+docker://quay.io/atulsingh0/php-info:latest
+
+oc import-image php-info:latest \
+--reference-policy=local \
+--from=quay.io/atulsingh0/php-info:latest \
+--confirm
+
+oc new-project expose-image
+oc policy add-role-to-group system:image-puller \
+system:serviceaccounts:expose-image -n me-common
+
+
+oc new-app --name=php-info \
+-i me-common/php-info
+
+oc expose svx/php-info \
+oc get route php-info -o jsonpath='{ .spec.host }'
+
+curl $(oc get route php-info -o jsonpath='{ .spec.host }')
+
+oc delete project expose-image
+
+
+# CH02-Ex1
+#-------------------
+
+oc new-project container-image
+
+oc new-app --as-deployment-config --name hola \
+https://github.com/${RHT_OCP4_GITHUB_USER}/DO288-apps#develop \
+--context-dir container-build
+
+oc expose svc/hola
+
+oc logs -f bc/hola
+
+oc delete all -l app=hola
+
+# edit the dockerfile
+# change n expose port
+# change ownership of files
+# set a non-root user
+# redeploy
+
+curl $(oc get route hola -o jsonpath='{ .spec.host }')
+
+
+# CH02-Ex2
+#-------------------
+
+oc new-app --as-deployment-config --name myapp \
+--build-env npm_config_registry=http://${RHT_OCP4_NEXUS_SERVER}/repository/nodejs \
+nodejs:12~https://github.com/${RHT_OCP4_GITHUB_USER}/DO288-apps#develop \
+--context-dir app-config
+
+oc expose svc/myapp
+
+oc logs -f bc/myapp 
+
+curl $(oc get route myapp -o jsonpath='{.spec.host}')
+
+oc create configmap myappcm --from-literal APP_MSG="this is me learning DO288"
+oc create secret generic myappsec --from-file=./myapp.sec
+
+oc set env dc/myapp --from=configmap/myappcm 
+oc set volume dc/myapp --name myappsec \
+--add \
+-m /opt/app-root/secure \
+-t secret \
+--secret-name=myappsec
+
+oc delete all -l app=myapp
+
+
+# CH02-lab
+#-------------------
+
+oc new-app --as-deployment-config --name elvis \
+https://github.com/${RHT_OCP4_GITHUB_USER}/DO288-apps#develop \
+--context-dir hello-java
+
+oc expose svc/elvis
+oc logs -f bc/elvis
+
+curl $(oc get route elvis -o jsonpath='{.spec.host}')/api/hello
+
+oc create configmap elviscm --from-literal APP_MSG='This is magic'
+oc set env dc/elvis --from configmap/elviscm
+
+oc rollout latest elvis
+
+
+# CH04-Ex1
+#-------------------
+
+
+oc new-app --as-deployment-config --name jhost \
+--build-env MAVEN_MIRROR_URL=http://${RHT_OCP4_NEXUS_SERVER}/repository/java \
+-i redhat-openjdk18-openshift:1.5 \
+https://github.com/${RHT_OCP4_GITHUB_USER}/DO288-apps#develop \
+--context-dir java-serverhost
+
+oc expose svc/jhost
+oc logs -f bc/jhost
+
+curl $(oc get route jhost -o jsonpath='{.spec.host}')
+
+
+# CH04-Ex2
+#-------------------
+
+skopeo copy \
+--dcreds=atulsingh0:'V!sual@11' \
+docker-archive:./php-70-rhel7-original.tar.gz \
+docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest
+
+
+podman login --authfile ../../auth.json quay.io
+
+oc create secret generic quayio \
+--type=kubernetes.io/dockerconfigjson \
+--from-file=.dockerconfigjson=../../auth.json
+
+oc secrets link default quayio --for=pull
+oc secrets link builder quayio --for=pull
+oc secrets link default quayio 
+oc secrets link builder quayio 
+
+oc import-image php-base --from  quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest --confirm
+
+
+oc new-app --name trigger \
+--as-deployment-config \
+php-base~https://github.com/${RHT_OCP4_GITHUB_USER}/DO288-apps#develop \
+--context-dir trigger-builds
+
+oc logs -f bc/trigger
+
+oc expose svc/trigger
+curl $(oc get route trigger -o jsonpath='{.spec.host}')
+
+
+skopeo copy \
+--screds=atulsingh0:'V!sual@11' \
+--dcreds=atulsingh0:'V!sual@11' \
+docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest \
+docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:v1 
+
+
+skopeo copy \
+--dcreds=atulsingh0:'V!sual@11' \
+docker-archive:php-70-rhel7-newer.tar.gz \
+docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest
+
+skopeo copy \
+--screds=atulsingh0:'V!sual@11' \
+--dcreds=atulsingh0:'V!sual@11' \
+docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest \
+docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:v2
+
+
+oc import-image php-base 
+oc logs -f bc/trigger
+curl $(oc get route trigger -o jsonpath='{.spec.host}')
+
+
+
+oc delete all -l app=trigger
+
+
+# CH04-Ex3
+#-------------------
+
+oc status
+
+oc new-app --as-deployment-config --name hook \
+php:7.3~http://github.com/${RHT_OCP4_GITHUB_USER}/DO288-apps \
+--context-dir post-commit
+
+oc expose svc/hook
+
+
+
+oc describe bc/hook | grep Post
+
+oc start-build bc/hook -F
+
+oc set env bc/hook DEVELOPER="Your Name"
+oc set env bc/hook --list
+oc start-build bc/hook -F
+
+curl http://builds-for-managers-atul-haridoss-abc-com-post-commit.apps.na45.prod.nextcle.com/
+
+
+# copying the imgae
+skopeo copy \
+-dcreds=atulsingh0:'V!sual@11' \
+docker://quay.io/repository/redhattraining/builds-for-managers:latest \
+docker://quay.io/repository/atulsingh0/builds-for-managers:latest 
+
+
+
+# CH04-lab
+#-------------------
+
+oc new-app --as-deployment-config \
+--name simple \
+--build-env npm_config_registry=http://${RHT_OCP4_NEXUS_SERVER}/repository/nodejs \
+nodejs~https://github.com/${RHT_OCP4_GITHUB_USER}/DO288-apps#develop \
+--context-dir build-app
+
+oc expose svc/simple
+
+oc describe bc/simple
+oc get bc/simple -o yaml
+
+
+# CH05-Ex1
+#-------------------
+
+
+oc new-app --as-deployment-config \
+--name bonjour \
+httpd:2.4~https://github.com/${RHT_OCP4_GITHUB_USER}/DO288-apps#develop \
+--context-dir s2i-scripts
+
+
+# CH05-Ex2   
+#-------------------
+
+s2i version
+s2i create s2i-do288-httpd s2i-do288-httpd
+
+podman build -t quay.io/atulsingh0/s2i-do288-httpd .
+s2i build test/test-app/ quay.io/atulsingh0/s2i-do288-httpd s2i-httpd-app --as-dockerfile s2i-httpd-app/Dockerfile
+
+podman build -t s2i-httpd-app -f s2i-httpd-app/Dockerfile
+
+
+
+# CH06-Ex1
+#-------------------
+
+oc get is,bc,dc,svc,route,pcv -o yaml -o export > dirty.yaml
+
+ - clean the yaml files by removing annotations, field & status value
+ - No of ocp object should be equal to no of object deployed.
+ - No of IS should be equal to no of DC
+
+
+
+# CH06-lab
+#-------------------
+
+oc new-app  --as-deployment-config --name todo --file ./todo-template-fix.yaml \
+    -p APP_GIT_URL=https://github.com/atulsingh0/DO288-apps \
+    -p NPM_PROXY=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+    -p PASSWORD=mypass \
+    -p CLEAN_DATABASE=true \
+    -p SECRET=atul1234 \
+    -p HOSTNAME=todo-container-image.apps.na45.prod.nextcle.com
+
+

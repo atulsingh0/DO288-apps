@@ -13,7 +13,7 @@ pipeline {
     environment {
         //TODO: Customize these variables for your environment
         DEV_PROJECT = "me-dev"
-        STAGE_PROJECT = "me-wa"
+        STAGE_PROJECT = "me-qa"
         APP_GIT_URL = "https://github.com/atulsingh0/DO288-apps"
         NEXUS_SERVER = "http://nexus-common.apps.na45.prod.nextcle.com/repository/java"
 

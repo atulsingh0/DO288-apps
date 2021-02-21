@@ -15,7 +15,7 @@ pipeline {
         DEV_PROJECT = "me-dev"
         STAGE_PROJECT = "me-qa"
         APP_GIT_URL = "https://github.com/atulsingh0/DO288-apps"
-        NEXUS_SERVER = "http://nexus-common.apps.cluster.domain.example.com/repository/nodejs"
+        NEXUS_SERVER = "http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs"
 
         // DO NOT CHANGE THE GLOBAL VARS BELOW THIS LINE
         APP_NAME = "books"
@@ -65,6 +65,7 @@ pipeline {
 		
 			oc new-app $APP_NAME \
 			--as-deployment-config \
+			--build-env npm-config-registry=$NEXUS_SERVER \
 			nodejs~${APP_GIT_URL} \
 			--context-dir $APP_NAME
 

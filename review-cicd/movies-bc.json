@@ -9,7 +9,7 @@
             "type": "Git",
             "git": {
                 "uri": "https://github.com/youruser/DO288-apps",
-                "ref": "review-cicd"
+                "ref": "develop"
             },
             "contextDir": "movies"
         },

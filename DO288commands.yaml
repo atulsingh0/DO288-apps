@@ -457,3 +457,175 @@ oc set probe dc/quip --readiness \
 
 oc start-build quip -F
 oc rollback dc/quip
+
+
+
+# CH07-lab
+#-------------------  
+
+
+oc new-app --as-deployment-config \
+--name scale \
+php~https://github.com/atulsingh0/DO288-apps \
+--context-dir php-scale
+
+oc get dc/scale -o jsonpath='{.spec.strategy.type}{"\n"}'
+
+
+# CH08-Ex1
+#-------------------  
+
+oc new-project me-dev
+oc new-project me-qa
+oc new-project me-common
+
+oc new-app --name jenkins --template=jenkins-ephemeral
+
+
+oc policy add-role-to-user edit system:serviceaccount:me-common:jenkins -n me-dev
+oc policy add-role-to-user edit system:serviceaccount:me-common:jenkins -n me-qa
+
+
+# CH08-Ex2/lab
+#-------------------  
+
+
+# LAB 1
+# -----------------------
+
+
+podman build -t quay.io/atulsingh0/front-end:latest .
+podman push quay.io/atulsingh0/front-end:latest
+
+oc new-project me-lab
+
+oc create secret docker-registry quayio \
+--docker-server=quay.io \
+--docker-username=atulsingh0 \
+--docker-password='V!sual@11'
+
+oc secrets link builder quayio --for=pull
+oc secrets link default quayio --for=pull
+
+oc import-image frontend:latest --from=quay.io/atulsingh0/front-end:latest \
+--reference-policy=local \
+--confirm
+
+oc policy add-role-to-group system:image-puller system:serviceaccounts:me-dev -n me-common
+
+oc project me-dev
+
+oc new-app --name=frontend \
+--as-deployment-config \
+-e BACKEND_HOST=api.example.com \
+-i me-lab/front-end:latest
+
+
+# LAB 2
+# -----------------------
+
+oc create secret generic tododb \
+--from-literal user=todoapp \
+--from-literal password=mypass 
+
+
+oc new-app --name=mysql \
+--as-deployment-config \
+-e MYSQL_DATABASE=todo \
+-e MYSQL_USER=todoapp \
+-e MYSQL_PASSWORD=mypass \
+--docker-image=registry.access.redhat.com/rhscl/mysql-57-rhel7
+
+oc set env dc/mysql --from=secret/tododb --prefix=MYSQL_
+
+-- 
+
+oc create configmap todoapp \
+--from-literal init=true 
+
+oc new-app --name=backend \
+--as-deployment-config \
+--build-env npm_config_registry=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+-e DATABASE_USER=todoapp \
+-e DATABASE_PASSWORD=mypass \
+-e DATABASE_NAME=todo \
+-e DATABASE_SVC=mysql \
+-e DATABASE_INIT=true \
+nodejs:12~http://github.com/atulsingh0/DO288-apps#develop \
+--context-dir=todo-backend
+
+oc set env dc/backend --from=configmap/todoapp --prefix=DATABASE_
+oc set env dc/backend --from=secret/tododb --prefix=DATABASE_
+
+oc rollout latest dc/backend
+
+
+
+# LAB 3
+# -----------------------
+
+oc new-app --name=todoapp \
+--template=todoapp \
+-p DATABASE_IMAGE=registry.access.redhat.com/rhscl/mysql-57-rhel7 \
+-p BACK_END_REPO=http://github.com/atulsingh0/DO288-apps \
+-p BACK_END_CTXDIR=todo-backend \
+-p NPM_PROXY=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+-p SECRET=atul1234 \
+-p PASSWORD=redhat \
+-p HOSTNAME=todoui-me-lab.apps.na45.prod.nextcle.com \
+-p BACKEND=todoapi-me-lab.apps.na45.prod.nextcle.com \
+-p CLEAN_DATABASE=true
+
+
+
+# -------------------------
+# LAB 1 & LAB2 again 
+
+
+
+oc create secret docker-registry quayio \
+--docker-server=quay.io \
+--docker-username=atulsingh0 \
+--docker-password='V!sual@11'
+
+oc secrets link builder quayio --for=pull
+oc secrets link default quayio --for=pull
+
+oc import-image todo-frontend:latest --from=quay.io/atulsingh0/front-end:latest \
+--reference-policy=local \
+--confirm
+
+
+oc policy add-role-to-group system:image-puller system:serviceaccounts:me-dev -n me-lab
+
+oc project me-dev
+
+oc new-app --name=todo-frontend \
+--as-deployment-config \
+-e BACKEND_HOST=api.example.com \
+-i me-lab/todo-frontend:latest
+
+
+
+oc new-app --name=todoapp \
+--template=todoapp \
+-p DATABASE_IMAGE=registry.access.redhat.com/rhscl/mysql-57-rhel7 \
+-p BACK_END_REPO=http://github.com/atulsingh0/DO288-apps \
+-p BACK_END_CTXDIR=todo-backend \
+-p NPM_PROXY=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+-p SECRET=atul1234 \
+-p PASSWORD=redhat \
+-p HOSTNAME=todoui-me-dev.apps.na45.prod.nextcle.com \
+-p BACKEND=todoapi-me-dev.apps.na45.prod.nextcle.com \
+-p CLEAN_DATABASE=true
+
+oc set probe dc/backend --liveness --get-url=http://:8080/todo/api/items-count --timeout-seconds=3 --initial-delay-seconds=10
+oc set probe dc/backend --readiness --get-url=http://:8080/todo/api/host --timeout-seconds=3 --initial-delay-seconds=10
+
+
+oc port-forward $(oc get pods -l app=tododb -o name) 33306:3306 &
+RC=$!
+sleep 3
+mysql -utodoapp -predhat -h127.0.0.1 -P33306  todo < todo.sql
+kill -15 $RC
+

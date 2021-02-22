@@ -33,18 +33,18 @@ objects:
         type: Source
 - apiVersion: v1
   data:
-    init: "false"
-  kind: ConfigMap
-  metadata:
-    name: todoapp
-- apiVersion: v1
-  data:
     password: bXlwYXNz
     user: dG9kb2FwcA==
   kind: Secret
   metadata:
     name: tododb
   type: Opaque
+- apiVersion: v1
+  data:
+    init: "${CLEAN_DATABASE}"
+  kind: ConfigMap
+  metadata:
+    name: todoapp
 - apiVersion: build.openshift.io/v1
   kind: BuildConfig
   metadata:
@@ -277,7 +277,7 @@ objects:
       app: backend
     name: backend
   spec:
-    host: backend-atul-singh-rbc-com-review-service.apps.na45.prod.nextcle.com
+    host: ${BACKEND}
     port:
       targetPort: 8080-tcp
     to:
@@ -317,7 +317,7 @@ objects:
         containers:
         - env:
           - name: BACKEND_HOST
-            value: api.example.com
+            value: ${BACKEND}
           imagePullPolicy: Always
           name: frontend
           ports:
@@ -341,7 +341,6 @@ objects:
         from:
           kind: ImageStreamTag
           name: todo-frontend:latest
-          namespace: atul-singh-rbc-com-review-common
       type: ImageChange
 - apiVersion: v1
   kind: Service
@@ -368,7 +367,7 @@ objects:
       app: frontend
     name: frontend
   spec:
-    host: frontend-atul-singh-rbc-com-review-dockerfile.apps.na45.prod.nextcle.com
+    host: ${HOSTNAME}
     port:
       targetPort: 8080-tcp
     to:
@@ -400,6 +399,8 @@ parameters:
 - displayName: Secret for webhooks
   name: SECRET
   required: true
+  from: '[a-zA-Z0-9]{16}'
+  generate: expression
 - displayName: MySQL database password for the todoapp user
   name: PASSWORD
   required: true
@@ -409,4 +410,8 @@ parameters:
 - displayName: Host name to acccess the To Do List back-end HTTP API
   name: BACKEND
   required: true
+- displayName: Initialize the database
+  name: CLEAN_DATABASE
+  required: true
+  value: "false"
 

@@ -263,4 +263,125 @@ s2i create  s2i-do288-go s2i-do288-go
 
 s2i build test/test-app s2i-do288-go s2i-go-app --as-dockerfile s2i-go-app/Dockerfile
 
+oc import-image s2i-do288-go --from=quay.io/atulsingh0/s2i-do288-go --confirm 
+
+oc new-app --name=greet \
+--as-deployment-config \
+s2i-do288-go~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir go-hello
+
+
+
+## CH06-Ex1
+##-----------------
+
+
+oc new-app  --as-deployment-config --file=quotes-template-done.yaml \
+    -p APP_GIT_URL=https://github.com/atulsingh0/DO288-apps \
+    -p PASSWORD=mypass
+
+echo 'Creating tunnel...'
+pod=$(oc get pod -l deploymentconfig=quotesdb -o name)
+oc port-forward $(basename ${pod}) 30306:3306 &
+tunnel=$!
+sleep 3
+echo 'Initializing the database...'
+mysql -h127.0.0.1 -P30306 -uquoteapp -pmypass quotesdb \
+    < quote.sql
+sleep 3
+echo 'Terminating tunnel...'
+kill ${tunnel}
+
+
+
+## CH06-LAB
+##-----------------
+
+oc new-app  --as-deployment-config --file=todo-template-atul.yaml \
+	--name todo \
+    -p APP_GIT_URL=https://github.com/atulsingh0/DO288-apps \
+    -p PASSWORD=mypass \
+    -p NPM_PROXY=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+    -p HOSTNAME=todo-atul-dev.apps.na45.prod.nextcle.com \
+    -p CLEAN_DATABASE=true
+
+oc delete all -l 'app in (todoapp, tododb)'  
+
+
+
+## CH07-Ex1
+##-----------------
+
+oc new-app --as-deployment-config \
+--name probes --build-env \
+npm_config_registry=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+nodejs:12~https://github.com/atulsingh0/DO288-apps \
+--context-dir probes
+
+oc set probe dc/probes --liveness --get-url=https://:8080/healthz \
+--initial-delay-seconds=2 --timeout-seconds=2
+
+
+oc set probe dc/probes --readiness --get-url=https://:8080/ready \
+--initial-delay-seconds=2 --timeout-seconds=2
+
+curl http://probes-atul-dev.apps.na45.prod.nextcle.com/flip?op=kill
+
+
+
+## CH07-Ex2
+##-----------------
+
+oc new-app --name mysql \
+--as-deployment-config \
+-e MYSQL_DATABASE=sample \
+-e MYSQL_USER=redhat \
+-e MYSQL_PASSWORD=openshift \
+--docker-image registry.access.redhat.com/rhscl/mysql-57-rhel7
+
+oc get dc/mysql -o jsonpath='{.spec.strategy.type}{"\n"}'
+
+oc patch dc/mysql -p '{"spec":{"strategy":{"type":"Recreate"}}}'
+
+oc patch dc/mysql --type=json -p='[{"op":"remove", "path": "/spec/strategy/rollingParams"}]'
+
+
+oc set deployment-hook dc/mysql --failure-policy='abort' --container=mysql --post \
+-- "/bin/sh" "-c" "curl -L -s https://github.com/RedHatTraining/DO288-apps/releases/download/OCP-4.1-1/import.sh -o /tmp/import.sh&&chmod 755 /tmp/import.sh&&/tmp/import.sh"
+
+XXX oc set deployment-hook dc/mysql --failure-policy='abort' --container=mysql --post \
+-- "/bin/sh -c curl -L -s https://github.com/RedHatTraining/DO288-apps/releases/download/OCP-4.1-1/import.sh -o /tmp/import.sh&&chmod 755 /tmp/import.sh&&/tmp/import.sh"
+
+
+oc get dc/mysql -o jsonpath='{.spec.strategy.recreateParams.post.failurePolicy}{"\n"}'
+
+oc patch dc/mysql -p '{"spec":{"strategy":{"recreateParams":{"post":{"failurePolicy":"abort"}}}}}'
+
+oc set env dc/mysql HOOK_RETRIES=5
+oc rollout latest dc/mysql
+
+oc delete all -l app=mysql
+
+
+
+## CH07-Ex3
+##-----------------
+
+oc new-app --name quip \
+--as-deployment-config \
+--build-env MAVEN_MIRROR_URL=http://nexus-common.apps.na45.prod.nextcle.com/repository/java \
+-i redhat-openjdk18-openshift:1.5 \
+https://github.com/atulsingh0/DO288-apps#dev \
+--context-dir quip
+
+
+ oc set probe dc/quip --liveness \
+ --get-url=http://:8080/ready \
+ --initial-delay-seconds=30 --timeout-seconds=2
+
+oc set probe dc/quip --readiness \
+--get-url=http://:8080/ready \
+--initial-delay-seconds=30 --timeout-seconds=2
+
+
 

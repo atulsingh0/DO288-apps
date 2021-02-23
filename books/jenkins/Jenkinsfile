@@ -149,7 +149,7 @@ pipeline {
 			openshift.withProject(env.STAGE_PROJECT) {
 				def dc = openshift.selector("dc", "${APP_NAME}").rollout()
 				openshift.selector("dc", "${APP_NAME}").related("PODS").untilEach(1) {
-				return (it.object().phase.status == "Running")
+				return (it.object().status.phase == "Running")
 			}
 			}
 

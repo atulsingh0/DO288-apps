@@ -385,3 +385,23 @@ oc set probe dc/quip --readiness \
 
 
 
+## CH07-Lab
+##-----------------
+
+oc new-app --name scale \
+--as-deployment-config \
+php~https://github.com/atulsingh0/DO288-apps#dev \
+--context-dir php-scale
+
+
+
+## CH08-Ex1
+##-----------------
+
+oc project atul-common
+oc get is -n openshift | grep jenkins
+
+oc process openshift//jenkins-ephemeral  | oc apply -f -
+
+oc policy add-role-to-user edit system:serviceaccount:atul-common:jenkins -n atul-dev
+oc policy add-role-to-user edit system:serviceaccount:atul-common:jenkins -n atul-stage

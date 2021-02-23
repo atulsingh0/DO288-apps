@@ -1,0 +1,266 @@
+## DO288
+
+https://github.com/atulsingh0/DO288-apps.git#dev 
+
+oc create secret docker-registry quayio \
+--docker-server=quay.io \
+--docker-username=atulsingh0 \
+--docker-password='V!sual@11'
+
+oc secrets link default quayio --for=pull
+
+
+php-hello-dockerfile-atul-dev.apps.na45.prod.nextcle.com
+
+
+npm_config_registry=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs
+maven_mirror_url=http://nexus-common.apps.na45.prod.nextcle.com/repository/java
+
+
+
+## CH01-Ex1
+##-----------------
+
+oc new-app --name=ubi-echo \
+--as-deployment-config \
+https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir=ubi-echo
+
+
+
+## CH01-Ex2
+##-----------------
+
+oc new-app --name=php-hello \
+--as-deployment-config \
+https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir=php-hello-dockerfile
+
+
+
+## CH01-Ex3
+##-----------------
+
+oc new-app --name=quotes \
+--as-deployment-config \
+php~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir=quotes
+
+
+
+## CH01-Lab
+##-----------------
+
+oc new-app --name=greet \
+--as-deployment-config \
+--build-env npm_config_registry=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+nodejs:12~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir=nodejs-helloworld
+
+
+
+## CH02-Ex1
+##-----------------
+
+
+
+## CH02-Ex2
+##-----------------
+
+oc create secret generic myappsec --from-file=./myapp.sec
+oc create cm appmsg --from-literal APP_MSG='I am in love'
+
+
+oc new-app --name=myapp \
+--as-deployment-config \
+--build-env npm_config_registry=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+nodejs:12~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir=app-config
+
+oc set env dc/myapp --from=configmap/appmsg
+oc set volume dc/myapp --add --type=secret --secret-name=myappsec -m /opt/app-root/secure
+
+
+
+## CH02-Lab
+##-----------------
+
+oc new-app --name=elvis \
+--as-deployment-config \
+https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir=hello-java
+
+oc create configmap appconfig --from-literal APP_MSG='I lives'
+
+oc set env dc/elvis --from=configmap/appconfig
+
+
+
+## CH03-Ex1
+##-----------------
+
+XX skopeo copy \
+docker://localhost/ubi-sleep:latest \
+docker://quay.io/atulsingh0/ubi-sleep:latest \
+--dcreds atulsingh0:'V!sual@11'
+
+podman tag ubi-sleep:latest quay.io/atulsingh0/ubi-sleep:latest
+podman push quay.io/atulsingh0/ubi-sleep:latest
+
+oc new-app --name sleep \
+--as-deployment-config \
+--docker-image quay.io/atulsingh0/ubi-sleep:latest
+
+
+
+## CH03-Ex2
+##-----------------
+
+TOKEN=$(oc whoami -t)
+OCUSER=$(oc whoami)
+
+podman login default-route-openshift-image-registry.apps.na45.prod.nextcle.com -u $OCUSER -p $TOKEN
+podman pull default-route-openshift-image-registry.apps.na45.prod.nextcle.com/atul-dev/myapp:latest
+
+podman build -t ubi-info .
+podman tag ubi-info  default-route-openshift-image-registry.apps.na45.prod.nextcle.com/atul-dev/ubi-info 
+podman push default-route-openshift-image-registry.apps.na45.prod.nextcle.com/atul-dev/ubi-info
+
+oc new-app --name=ubi-info \
+--as-deployment-config \
+-i ubi-info
+
+
+
+## CH03-Ex3
+##-----------------
+
+oc import-image hello-world --from=quay.io/redhattraining/hello-world-nginx --confirm 
+
+oc new-app --name hello \
+-i hello-world \
+--as-deployment-config 
+
+oc expose svc/hello
+
+
+
+## CH03-Lab
+##-----------------
+
+oc new-project atul-common
+
+skopeo copy \
+oci:./php-info \
+docker://quay.io/atulsingh0/php-info:latest \
+--dcreds atulsingh0:'V!sual@11'
+
+oc create secret docker-registry quayio \
+--docker-server=quay.io \
+--docker-username=atulsingh0 \
+--docker-password='V!sual@11'
+
+oc policy add-role-to-group system:image-puller \
+system:serviceaccounts:atul-dev
+
+oc secrets link default quayio --for=pull
+
+oc import-image php-info:latest \
+--reference-policy=local \
+--from=quay.io/atulsingh0/php-info:latest --confirm
+
+oc project atul-dev
+
+oc new-app --name=php-info \
+--as-deployment-config \
+-i atul-common/php-info:latest
+
+
+
+## CH04-Ex1
+##-----------------
+
+oc new-app --name jhost \
+--as-deployment-config \
+--strategy=source \
+--build-env maven_mirror_url=http://nexus-common.apps.na45.prod.nextcle.com/repository/java \
+redhat-openjdk18-openshift:1.8~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir java-serverhost
+
+
+
+## CH04-Ex2
+##-----------------
+
+oc import-image php-imp:latest --from=quay.io/atulsingh0/php-70-rhel7:v1 --confirm 
+
+oc new-app --name triggers \
+--as-deployment-config \
+php-imp:latest~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir trigger-builds
+
+
+oc import-image php-imp:v2 --from=quay.io/atulsingh0/php-70-rhel7:v2 --confirm
+oc tag php-imp:v2 php-imp:latest
+
+
+
+## CH04-Ex3
+##-----------------
+
+oc new-app --name=builds-for-managers \
+--as-deployment-config \
+--docker-image quay.io/atulsingh0/builds-for-managers:latest
+
+oc new-app --name=hook \
+--as-deployment-config \
+php~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir post-commit
+
+
+oc set build-hook bc/hook --post-commit --command -- \
+    bash -c "\"curl -s -S -i -X POST builds-for-managers-atul-dev.apps.na45.prod.nextcle.com/api/builds -f -d 'developer=\${DEVELOPER}&git=\${OPENSHIFT_BUILD_SOURCE}&project=\${OPENSHIFT_BUILD_NAMESPACE}'\""
+
+oc set env bc/hook DEVELOPER=atul
+oc start-build hook -F
+
+
+
+## CH04-Lab
+##-----------------
+
+oc new-app --name=simple \
+--as-deployment-config \
+--build-env npm_config_registry=http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs \
+nodejs~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir build-app
+
+curl -X POST https://api.na45.prod.nextcle.com:6443/apis/build.openshift.io/v1/namespaces/atul-dev/buildconfigs/simple/webhooks/wCWHdHlOzvnCCa7g6k8z/generic
+
+
+
+## CH05-Ex1
+##-----------------
+
+oc new-app --name=bonjour \
+--as-deployment-config \
+httpd~https://github.com/atulsingh0/DO288-apps.git#dev \
+--context-dir s2i-scripts
+
+
+
+## CH05-Ex2   XXXXXXXXXXXXXXXXXXXXXXXX
+##-----------------
+
+s2i create s2i-do288-nginx s2i-do288-nginx
+
+
+
+## CH05-Lab
+##-----------------
+
+s2i create  s2i-do288-go s2i-do288-go
+
+s2i build test/test-app s2i-do288-go s2i-go-app --as-dockerfile s2i-go-app/Dockerfile
+
+

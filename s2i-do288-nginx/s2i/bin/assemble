@@ -1,0 +1,14 @@
+#!/bin/bash -e
+#
+# S2I assemble script for the 's2i-do288-nginx' image.
+# The 'assemble' script builds your application source so that it is ready to run.
+#
+# For more information refer to the documentation:
+#	https://github.com/openshift/source-to-image/blob/master/docs/builder_image.md
+#
+
+# If the 's2i-do288-nginx' assemble script is executed with the '-h' flag, print the usage.
+
+echo "---> Copying source HTML files to web server root..."
+cp -Rf /tmp/src/. /opt/rh/rh-nginx18/root/usr/share/nginx/html/
+echo "Hi, this is me atul" > /opt/rh/rh-nginx18/root/usr/share/nginx/html/test.html

@@ -6,15 +6,16 @@ pipeline {
     agent {
       node {
         //TODO: Add label for Node.js jenkins agent
+	label 'nodejs'
       }
     }
 
     environment {
         //TODO: Edit these vars as per your env
-        DEV_PROJECT = "youruser-books-dev"
-        STAGE_PROJECT = "youruser-books-stage"
-        APP_GIT_URL = "https://github.com/youruser/DO288-apps"
-        NEXUS_SERVER = "http://nexus-common.apps.cluster.domain.example.com/repository/nodejs"
+        DEV_PROJECT = "atul-dev"
+        STAGE_PROJECT = "atul-stage"
+        APP_GIT_URL = "https://github.com/atulsingh0/DO288-apps"
+        NEXUS_SERVER = "http://nexus-common.apps.na45.prod.nextcle.com/repository/nodejs"
 
         // DO NOT CHANGE THE GLOBAL VARS BELOW THIS LINE
         APP_NAME = "books"
@@ -59,6 +60,16 @@ pipeline {
 
                 echo '### Creating a new app in DEV env ###'
                 //TODO: Create a new app and expose the service
+		sh '''
+			oc project ${DEV_PROJECT}
+			oc new-app --name=${APP_NAME} \
+			--as-deployment-config \
+			--build-env npm_config_registry=${NEXUS_SERVER} \
+			nodejs~${APP_GIT_URL} \
+			--context-dir ${APP_NAME}
+
+			oc expose svc ${APP_NAME}
+		'''
             }
         }
 
@@ -100,6 +111,9 @@ pipeline {
                     input message: "Promote to Staging?"
                 }
                 //TODO: Tag the books:latest image stream as books:stage
+		sh '''
+			oc tag ${DEV_PROJECT}/books:latest ${STAGE_PROJECT}/books:stage
+		'''
             }
         }
 
@@ -114,6 +128,12 @@ pipeline {
 
                 echo '### Creating a new app in Staging ###'
                 //TODO: Create a new app in stage using the books:stage image stream and expose the service
+		sh '''
+			oc project ${STAGE_PROJECT}
+			oc new-app --name=${APP_NAME} -i ${STAGE_PROJECT}/books:stage
+			oc expose svc ${APP_NAME}
+		'''
+
             }
         }
 
@@ -126,6 +146,12 @@ pipeline {
 
                     openshift.withCluster() {
                         //TODO: Watch deployment until pod is in 'Running' state
+			openshift.withProject(env.STAGE_PROJECT) {
+				def dc = openshift.selector("dc", "${APP_NAME}").rollout()
+				openshift.selector("dc", "${APP_NAME}").related("PODS").untilEach(1) {
+				return (it.object().phase.status == "Running")
+			}
+			}
 
                         echo "Deployment to Staging env is complete. Access the app at the URL http://${routeHost}."
                     }

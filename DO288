@@ -5,7 +5,7 @@ https://github.com/atulsingh0/DO288-apps.git#dev
 oc create secret docker-registry quayio \
 --docker-server=quay.io \
 --docker-username=atulsingh0 \
---docker-password='V!sual@11'
+--docker-password='Password'
 
 oc secrets link default quayio --for=pull
 
@@ -102,7 +102,7 @@ oc set env dc/elvis --from=configmap/appconfig
 XX skopeo copy \
 docker://localhost/ubi-sleep:latest \
 docker://quay.io/atulsingh0/ubi-sleep:latest \
---dcreds atulsingh0:'V!sual@11'
+--dcreds atulsingh0:'Password'
 
 podman tag ubi-sleep:latest quay.io/atulsingh0/ubi-sleep:latest
 podman push quay.io/atulsingh0/ubi-sleep:latest
@@ -153,12 +153,12 @@ oc new-project atul-common
 skopeo copy \
 oci:./php-info \
 docker://quay.io/atulsingh0/php-info:latest \
---dcreds atulsingh0:'V!sual@11'
+--dcreds atulsingh0:'Password'
 
 oc create secret docker-registry quayio \
 --docker-server=quay.io \
 --docker-username=atulsingh0 \
---docker-password='V!sual@11'
+--docker-password='Password'
 
 oc policy add-role-to-group system:image-puller \
 system:serviceaccounts:atul-dev

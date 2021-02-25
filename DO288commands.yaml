@@ -60,17 +60,17 @@ oc delete project me-common
 skopeo inspect docker://quay.io/redhattraining/hello-world-nginx
 
 skopeo copy \
---dcreds=atulsingh0:'V!sual@11' \
+--dcreds=atulsingh0:'Password' \
 docker://quay.io/redhattraining/hello-world-nginx \
 docker://quay.io/atulsingh0/hello-world-nginx 
 
-skopeo inspect docker://quay.io/redhattraining/hello-world-nginx --creds=atulsingh0:'V!sual@11'
+skopeo inspect docker://quay.io/redhattraining/hello-world-nginx --creds=atulsingh0:'Password'
 
 
 oc create secret docker-registry quayio \
 --docker-server=quay.io \
 --docker-username=atulsingh0 \
---docker-password='V!sual@11'
+--docker-password='Password'
 
 oc secrets link default quayio --for=pull
 
@@ -88,9 +88,9 @@ oc get route
 skopeo copy \
 oci:php-info \
 docker://quay.io/atulsingh0/php-info:latest \
---dcreds=atulsingh0:'V!sual@11'
+--dcreds=atulsingh0:'Password'
 
-skopeo inspect --creds=atulsingh0:'V!sual@11' \
+skopeo inspect --creds=atulsingh0:'Password' \
 docker://quay.io/atulsingh0/php-info:latest
 
 oc import-image php-info:latest \
@@ -203,7 +203,7 @@ curl $(oc get route jhost -o jsonpath='{.spec.host}')
 #-------------------
 
 skopeo copy \
---dcreds=atulsingh0:'V!sual@11' \
+--dcreds=atulsingh0:'Password' \
 docker-archive:./php-70-rhel7-original.tar.gz \
 docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest
 
@@ -234,20 +234,20 @@ curl $(oc get route trigger -o jsonpath='{.spec.host}')
 
 
 skopeo copy \
---screds=atulsingh0:'V!sual@11' \
---dcreds=atulsingh0:'V!sual@11' \
+--screds=atulsingh0:'Password' \
+--dcreds=atulsingh0:'Password' \
 docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest \
 docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:v1 
 
 
 skopeo copy \
---dcreds=atulsingh0:'V!sual@11' \
+--dcreds=atulsingh0:'Password' \
 docker-archive:php-70-rhel7-newer.tar.gz \
 docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest
 
 skopeo copy \
---screds=atulsingh0:'V!sual@11' \
---dcreds=atulsingh0:'V!sual@11' \
+--screds=atulsingh0:'Password' \
+--dcreds=atulsingh0:'Password' \
 docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:latest \
 docker://quay.io/${RHT_OCP4_QUAY_USER}/php-70-rhel7:v2
 
@@ -287,7 +287,7 @@ curl http://builds-for-managers-atul-haridoss-abc-com-post-commit.apps.na45.prod
 
 # copying the imgae
 skopeo copy \
--dcreds=atulsingh0:'V!sual@11' \
+-dcreds=atulsingh0:'Password' \
 docker://quay.io/repository/redhattraining/builds-for-managers:latest \
 docker://quay.io/repository/atulsingh0/builds-for-managers:latest 
 
@@ -502,7 +502,7 @@ oc new-project me-lab
 oc create secret docker-registry quayio \
 --docker-server=quay.io \
 --docker-username=atulsingh0 \
---docker-password='V!sual@11'
+--docker-password='Password'
 
 oc secrets link builder quayio --for=pull
 oc secrets link default quayio --for=pull
@@ -586,7 +586,7 @@ oc new-app --name=todoapp \
 oc create secret docker-registry quayio \
 --docker-server=quay.io \
 --docker-username=atulsingh0 \
---docker-password='V!sual@11'
+--docker-password='Password'
 
 oc secrets link builder quayio --for=pull
 oc secrets link default quayio --for=pull
